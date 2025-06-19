@@ -40,6 +40,8 @@ juce_add_gui_app(${PROJECT_NAME}
     PRODUCT_NAME "Guitar Tuner"
 )
 
+juce_generate_juce_header(GuitarTuner)
+
 #organize source files in IDE
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SourceFiles})
 
@@ -61,6 +63,10 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE
         #binary data for later
         juce::juce_gui_extra
+        juce::juce_gui_basics
+        juce::juce_audio_devices
+        juce::juce_audio_basics
+        juce::juce_audio_utils
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
