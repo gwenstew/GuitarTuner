@@ -14,11 +14,26 @@ MainComponent::~MainComponent() {
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
     // audio setup here
+    mSampleRate = sampleRate;
 }
 
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
 {
-    // real-time audio input here
+    /*
+        Input: address to instance of AudioSourceChannelInfo
+              AudioBuffer<float> * buffer
+              int numSamples
+              int startSample
+    */ 
+
+    int numSamples = bufferToFill.numSamples;
+    //pointer to start of buffer
+    auto * bufferData = bufferToFill.buffer->getReadPointer(0, bufferToFill.startSample);
+    pitch = detectPitchACF(bufferData, numSamples, mSampleRate);
+
+    //update gui with new pitch
+    if ( pitch > 0.0) repaint();
+
 }
 
 void MainComponent::releaseResources()
@@ -33,7 +48,9 @@ void MainComponent::paint (juce::Graphics& g)
 
     g.setFont (juce::Font (16.0f));
     g.setColour (juce::Colours::white);
-    g.drawText ("Hello World!", getLocalBounds(), juce::Justification::centred, true);
+
+    juce::String pitchString = juce::String(pitch) + " Hz";
+    g.drawText (pitchString, getLocalBounds(), juce::Justification::centred, true);
 }
 
 void MainComponent::resized()

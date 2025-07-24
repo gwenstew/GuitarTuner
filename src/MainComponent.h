@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+#include "AudioInput.h"
 
 
 class MainComponent : public juce::AudioAppComponent
@@ -17,6 +18,8 @@ public:
     void resized() override;
 
 private:
+    double mSampleRate = 4100.0;
+    double pitch = 0.0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
