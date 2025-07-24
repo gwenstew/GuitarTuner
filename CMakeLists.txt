@@ -32,6 +32,8 @@ set(SourceFiles
         src/Main.cpp
         src/MainComponent.cpp
         src/MainComponent.h
+        src/AudioInput.cpp
+        src/AudioInput.h
 )
 
 #add executable target and set preferences for application
