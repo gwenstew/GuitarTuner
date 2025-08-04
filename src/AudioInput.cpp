@@ -21,7 +21,7 @@ double detectPitchACF(const float* bufferData, int numSamples, double sampleRate
 
    for (int lag = minLag; lag < maxLag; lag++) {
         double sum = 0.0;
-        for (int x = 0; x < numSamples; x++) {
+        for (int x = 0; x < numSamples - lag; x++) {
             //auto correlation sum
             sum += bufferData[x] * bufferData[x + lag];
         }

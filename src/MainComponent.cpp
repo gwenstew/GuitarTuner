@@ -32,7 +32,7 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
     pitch = detectPitchACF(bufferData, numSamples, mSampleRate);
 
     //update gui with new pitch
-    if ( pitch > 0.0) repaint();
+    repaint();
 
 }
 
