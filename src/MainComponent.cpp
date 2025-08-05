@@ -13,7 +13,6 @@ MainComponent::~MainComponent() {
 
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
-    // audio setup here
     mSampleRate = sampleRate;
 }
 
@@ -48,6 +47,9 @@ void MainComponent::paint (juce::Graphics& g)
 
     g.setFont (juce::Font (16.0f));
     g.setColour (juce::Colours::white);
+
+    juce::String noteString = notes[binarySearch(pitch)].note;
+    g.drawText(noteString, 20, 40, 200, 40, juce::Justification::centred, true);
 
     juce::String pitchString = juce::String(pitch) + " Hz";
     g.drawText (pitchString, getLocalBounds(), juce::Justification::centred, true);
