@@ -2,11 +2,6 @@
 #include "AudioInput.h"
 
 
-struct Note {
-    char * note;
-    double freq;
-};
-
 const std::array<Note, 6> notes = {{
     {"E2", 82.41},
     {"A2", 110.0},
