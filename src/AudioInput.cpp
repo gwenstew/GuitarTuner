@@ -1,5 +1,46 @@
 //process audio input from microphone 
 #include "AudioInput.h"
+#include <array>
+#include <vector>
+
+struct Note {
+    char * note;
+    double freq;
+};
+
+const std::array<Note, 6> notes = {{
+    {"E2", 82.41},
+    {"A2", 110.0},
+    {"D3", 146.8},
+    {"G3", 196.0},
+    {"B3", 246.9},
+    {"E4", 329.2}
+}};
+
+int binarySearch(double pitch) {
+    //simple binary search of array of notes to find index of closest note (favors low)
+    int mid;
+    int low = 0;
+    int high = notes.size() - 1;
+
+    while (low <= high) {
+        //cpp truncates towards 0
+        mid = low + (high - low) / 2;
+
+        if (notes[mid].freq == pitch) {
+            return mid;
+        } else if (notes[mid].freq > pitch) {
+            //move left
+            high = mid - 1;
+        } else {
+            //move right
+            low = mid + 1;
+        }
+
+    };
+
+    return mid;
+}
 
 double detectPitchACF(const float* bufferData, int numSamples, double sampleRate) {
 
