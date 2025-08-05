@@ -1,7 +1,6 @@
 //process audio input from microphone 
 #include "AudioInput.h"
-#include <array>
-#include <vector>
+
 
 struct Note {
     char * note;
@@ -36,10 +35,8 @@ int binarySearch(double pitch) {
             //move right
             low = mid + 1;
         }
-
     };
-
-    return mid;
+    return low;
 }
 
 double detectPitchACF(const float* bufferData, int numSamples, double sampleRate) {
