@@ -1,6 +1,25 @@
 //will contain logic for gui component
 #include "MainComponent.h"
 
+/* TO DO :
+
+    - figure out juce gui
+        - how to display sound wave (real time?)
+
+    - implement timer and ISR so that you arent repainting everytime the buffer is emptied
+        - may be useful to include logic about current closest notes so you dont have to keep 
+            updating every time  
+        - seems to be quite fast now (without expenisve gui) maybe interrupt 25-50ms and 
+            observe difference in responsiveness; slower responsiveness might help eliminating jumps
+            in observed pitch
+    
+    - Noise reduction; unsure best method for this... i think a low-pass or band-pass might help
+        maybe 
+
+    - Harmonic Frequencies; havent run into issues with this yet but i think once i inlcude
+        more notes than standard tuning problems will ensue.... can maybe implement harmonic product spectrum
+*/
+
 MainComponent::MainComponent()
 {
     setAudioChannels(1,0);  //set number of input (1) and output channels (0);
