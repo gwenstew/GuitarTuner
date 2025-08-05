@@ -43,10 +43,10 @@ void MainComponent::releaseResources()
 void MainComponent::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    g.fillAll (juce::Colours::lightsalmon);
 
-    g.setFont (juce::Font (16.0f));
-    g.setColour (juce::Colours::white);
+    g.setFont (20.0f);
+    g.setColour (juce::Colours::maroon);
 
     juce::String noteString = notes[binarySearch(pitch)].note;
     g.drawText(noteString, 20, 40, 200, 40, juce::Justification::centred, true);
