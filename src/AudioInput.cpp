@@ -47,28 +47,35 @@ double detectPitchACF(const float* bufferData, int numSamples, double sampleRate
 
     //looking at guitar pitches between 70Hz and 1000Hz
    int minLag = sampleRate / 1000.0;
-   int maxLag = sampleRate / 70.0;
+   int maxLag = sampleRate / 40.0;
 
    double maxCorr = 0.0;
    int bestLag = 0;
 
-   //detect silence in the audio signal
+   //detect silence in the audio signal and compute auto corr at lag 0
    double rms = 0.0;
+   double r0 = 0.0;
    for (int i = 0; i<numSamples; i++) {
         rms += bufferData[i] * bufferData[i];
+        r0 = rms;
    }
    rms = std::sqrt(rms / numSamples);
-   if (rms < 0.01) return -1.0;
+   if (rms < 0.001) return -1.0;
 
    //ACF loop
+   
    for (int lag = minLag; lag < maxLag; lag++) {
         double sum = 0.0;
         for (int x = 0; x < numSamples - lag; x++) {
             //auto correlation sum
             sum += bufferData[x] * bufferData[x + lag];
         }
-        if (sum > maxCorr) {
-            maxCorr = sum;
+
+        //compute normalized acf
+        double norm = (r0 > 0.0) ? (sum / r0) : 0.0;
+
+        if (norm > maxCorr) {
+            maxCorr = norm;
             bestLag = lag;
         }
    }
