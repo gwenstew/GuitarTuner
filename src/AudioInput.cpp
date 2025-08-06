@@ -11,17 +11,18 @@ const std::array<Note, 6> notes = {{
     {"E4", 329.2}
 }};
 
-int binarySearch(double pitch) {
+std::size_t binarySearch(double pitch) {
     //simple binary search of array of notes to find index of closest note (favors low)
-    int mid;
-    int low = 0;
-    int high = notes.size() - 1;
+    std::size_t mid;
+    std::size_t low = 0;
+    std::size_t high = notes.size() - 1;
 
     while (low <= high) {
         //cpp truncates towards 0
         mid = low + (high - low) / 2;
 
-        if (notes[mid].freq == pitch) {
+        if (notes[mid].freq >= (pitch - 0.5) || notes[mid].freq <= (pitch + 0.5)) {
+            //return if within range
             return mid;
         } else if (notes[mid].freq > pitch) {
             //move left
@@ -46,8 +47,8 @@ double detectPitchACF(const float* bufferData, int numSamples, double sampleRate
     */
 
     //looking at guitar pitches between 70Hz and 1000Hz
-   int minLag = sampleRate / 1000.0;
-   int maxLag = sampleRate / 40.0;
+   int minLag = int(sampleRate / 1000.0);
+   int maxLag = int(sampleRate / 40.0);
 
    double maxCorr = 0.0;
    int bestLag = 0;

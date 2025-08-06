@@ -37,7 +37,7 @@ MainComponent::~MainComponent() {
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
     mSampleRate = sampleRate;
-    //std::cout << sampleRate << std::endl;
+    (void)samplesPerBlockExpected;
 
 }
 
@@ -54,7 +54,7 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
     
     if (write >= megaBufferSize ) write = 0;
 
-    //each time new
+    //each time buffer is filled we copy it to mega buffer
     megaBuffer.copyFrom(
             0,
             write,
@@ -83,7 +83,6 @@ void MainComponent::releaseResources()
 
 void MainComponent::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (juce::Colours::lightsalmon);
 
     g.setFont (20.0f);
