@@ -52,6 +52,15 @@ double detectPitchACF(const float* bufferData, int numSamples, double sampleRate
    double maxCorr = 0.0;
    int bestLag = 0;
 
+   //detect silence in the audio signal
+   double rms = 0.0;
+   for (int i = 0; i<numSamples; i++) {
+        rms += bufferData[i] * bufferData[i];
+   }
+   rms = std::sqrt(rms / numSamples);
+   if (rms < 0.01) return -1.0;
+
+   //ACF loop
    for (int lag = minLag; lag < maxLag; lag++) {
         double sum = 0.0;
         for (int x = 0; x < numSamples - lag; x++) {
