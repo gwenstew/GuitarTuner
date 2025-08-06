@@ -22,6 +22,10 @@
 
 MainComponent::MainComponent()
 {
+    //standard audio buffer size is 512... which is not large enough to detect frequencies < 100Hz
+    //must initialize MEGA BUFFER!
+    megaBuffer.setSize(1, megaBufferSize);
+
     setAudioChannels(1,0);  //set number of input (1) and output channels (0);
     setSize (600, 400);     //set size of display window
 }
@@ -33,7 +37,10 @@ MainComponent::~MainComponent() {
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
     mSampleRate = sampleRate;
+    //std::cout << sampleRate << std::endl;
+
 }
+
 
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
 {
@@ -43,14 +50,29 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
               int numSamples
               int startSample
     */ 
-
     int numSamples = bufferToFill.numSamples;
-    //pointer to start of buffer
-    auto * bufferData = bufferToFill.buffer->getReadPointer(0, bufferToFill.startSample);
-    pitch = detectPitchACF(bufferData, numSamples, mSampleRate);
+    
+    if (write >= megaBufferSize ) write = 0;
+
+    //each time new
+    megaBuffer.copyFrom(
+            0,
+            write,
+            *bufferToFill.buffer,
+            0,
+            0,
+            numSamples
+    );
+
+    write += numSamples;
+    
+    if (write == megaBufferSize) {
+        pitch = detectPitchACF(megaBuffer.getReadPointer(0), megaBufferSize, mSampleRate);
+    }
+
 
     //update gui with new pitch
-    repaint();
+    if (pitch > -1.0) repaint();
 
 }
 
