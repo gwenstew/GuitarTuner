@@ -32,7 +32,7 @@ std::size_t binarySearch(double pitch) {
             low = mid + 1;
         }
     };
-    return low;
+    return std::min(low, notes.size() -1);
 }
 
 double detectPitchACF(const float* bufferData, int numSamples, double sampleRate) {

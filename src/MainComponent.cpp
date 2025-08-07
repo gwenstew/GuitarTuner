@@ -59,8 +59,6 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
               int startSample
     */ 
     int numSamples = bufferToFill.numSamples;
-    
-    if (write >= megaBufferSize ) write = 0;
 
     //each time buffer is filled we copy it to mega buffer
     megaBuffer.copyFrom(
@@ -76,11 +74,10 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
     
     if (write == megaBufferSize) {
         pitch = detectPitchACF(megaBuffer.getReadPointer(0), megaBufferSize, mSampleRate);
+        megaBuffer.clear();
+        write = 0;
     }
 
-
-    //update gui with new pitch
-    //if (pitch > -1.0) repaint();
 
 }
 
@@ -96,11 +93,16 @@ void MainComponent::paint (juce::Graphics& g)
     g.setFont (20.0f);
     g.setColour (juce::Colours::maroon);
 
-    juce::String noteString = notes[binarySearch(pitch)].note;
-    g.drawText(noteString, 20, 40, 200, 40, juce::Justification::centred, true);
+    if (pitch > -1) {
+        juce::String noteString = notes[binarySearch(pitch)].note;
+        g.drawText(noteString, 20, 40, 200, 40, juce::Justification::centred, true);
 
-    juce::String pitchString = juce::String(pitch) + " Hz";
-    g.drawText (pitchString, getLocalBounds(), juce::Justification::centred, true);
+        juce::String pitchString = juce::String(pitch) + " Hz";
+        g.drawText (pitchString, getLocalBounds(), juce::Justification::centred, true);
+    } else {
+        g.drawText ("No pitch detected...", getLocalBounds(), juce::Justification::centred, true);
+    }
+    
 }
 
 void MainComponent::resized()
