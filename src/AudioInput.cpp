@@ -21,7 +21,7 @@ std::size_t binarySearch(double pitch) {
         //cpp truncates towards 0
         mid = low + (high - low) / 2;
 
-        if (notes[mid].freq >= (pitch - 0.5) || notes[mid].freq <= (pitch + 0.5)) {
+        if (notes[mid].freq >= (pitch - 5) && notes[mid].freq <= (pitch + 5)) {
             //return if within range
             return mid;
         } else if (notes[mid].freq > pitch) {
