@@ -3,7 +3,7 @@
 #include "AudioInput.h"
 
 
-class MainComponent : public juce::AudioAppComponent
+class MainComponent : public juce::AudioAppComponent, public juce::Timer
 {
 public:
 
@@ -13,6 +13,8 @@ public:
     juce::AudioBuffer<float> megaBuffer;
     static const int megaBufferSize = 2048;
     int write = 0;
+
+    void timerCallback() override;
 
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
     void getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill) override;

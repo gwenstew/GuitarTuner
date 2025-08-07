@@ -22,6 +22,9 @@
 
 MainComponent::MainComponent()
 {
+    //timer set up
+    startTimer(500);
+    
     //standard audio buffer size is 512... which is not large enough to detect frequencies < 100Hz
     //must initialize MEGA BUFFER!
     megaBuffer.setSize(1, megaBufferSize);
@@ -31,7 +34,12 @@ MainComponent::MainComponent()
 }
 
 MainComponent::~MainComponent() {
+    stopTimer();
     shutdownAudio();
+}
+
+void MainComponent::timerCallback() {
+    repaint();
 }
 
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
@@ -72,7 +80,7 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
 
 
     //update gui with new pitch
-    if (pitch > -1.0) repaint();
+    //if (pitch > -1.0) repaint();
 
 }
 
