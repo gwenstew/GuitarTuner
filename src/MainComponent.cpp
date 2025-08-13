@@ -22,15 +22,24 @@
 
 MainComponent::MainComponent()
 {
-    //timer set up
-    startTimer(500);
-    
-    //standard audio buffer size is 512... which is not large enough to detect frequencies < 100Hz
-    //must initialize MEGA BUFFER!
-    megaBuffer.setSize(1, megaBufferSize);
-
-    setAudioChannels(1,0);  //set number of input (1) and output channels (0);
     setSize (600, 400);     //set size of display window
+
+    // startTuner.setButtonText("Start Guitar Tuner"); //set up start button
+    // startTuner.setToggleable(1);
+    // addAndMakeVisible(startTuner);
+
+   // startTuner.onClick = [this] {
+        //timer set up
+        startTimer(50);
+    
+        //standard audio buffer size is 512... which is not large enough to detect frequencies < 100Hz
+        //must initialize MEGA BUFFER!
+        megaBuffer.setSize(1, megaBufferSize);
+
+        setAudioChannels(1,0);  //set number of input (1) and output channels (0);
+        //startTuner.setToggleState(1, dontSendNotification);
+    //};
+
 }
 
 MainComponent::~MainComponent() {
@@ -92,13 +101,36 @@ void MainComponent::paint (juce::Graphics& g)
 
     g.setFont (20.0f);
     g.setColour (juce::Colours::maroon);
+    int width = getWidth();
+    int height = getHeight();
+    juce::String higherNote;
+    juce::String lowerNote;
 
     if (pitch > -1) {
-        juce::String noteString = notes[binarySearch(pitch)].note;
-        g.drawText(noteString, 20, 40, 200, 40, juce::Justification::centred, true);
+        size_t closestNoteidx = binarySearch(pitch);
+
+        juce::String primaryNote = notes[closestNoteidx].note;
+        g.drawText(primaryNote, 0, height / 4, width, 40, juce::Justification::centred, true);
+
+        if (closestNoteidx > 0 ) {
+            //print higher note
+            lowerNote = notes[closestNoteidx -1].note;
+        } else {
+            lowerNote = " ";
+        }
+
+        if (closestNoteidx < notes.size()-1) {
+            //print higher note
+            higherNote = notes[closestNoteidx +1].note;
+        } else {
+            higherNote = " ";
+        }
+        
+        g.drawText(lowerNote, 20, height / 2 + 40, 200, 40, juce::Justification::centredLeft, true);
+        g.drawText(higherNote, width - 220, height / 2 + 40, 200, 40, juce::Justification::centredRight, true);
 
         juce::String pitchString = juce::String(pitch) + " Hz";
-        g.drawText (pitchString, getLocalBounds(), juce::Justification::centred, true);
+        g.drawText (pitchString, getLocalBounds(), juce::Justification::centredTop, true);
     } else {
         g.drawText ("No pitch detected...", getLocalBounds(), juce::Justification::centred, true);
     }
@@ -107,7 +139,5 @@ void MainComponent::paint (juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    // This is called when the MainComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions
+    
 }

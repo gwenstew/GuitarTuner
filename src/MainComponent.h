@@ -25,7 +25,9 @@ public:
 
 private:
     double mSampleRate = 4100.0;
-    double pitch = 0.0;
+    double pitch = -1.0;
+
+   // juce::TextButton startTuner;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
