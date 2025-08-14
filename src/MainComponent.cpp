@@ -68,7 +68,7 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
               int startSample
     */ 
     int numSamples = bufferToFill.numSamples;
-
+    int samplesToCopy = std::min(numSamples, megaBufferSize - write);
     //each time buffer is filled we copy it to mega buffer
     megaBuffer.copyFrom(
             0,
@@ -76,13 +76,13 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
             *bufferToFill.buffer,
             0,
             0,
-            numSamples
+            samplesToCopy
     );
 
-    write += numSamples;
+    write += samplesToCopy;
     
     if (write == megaBufferSize) {
-        pitch = detectPitchACF(megaBuffer.getReadPointer(0), megaBufferSize, mSampleRate);
+        pitch.store(detectPitchACF(megaBuffer.getReadPointer(0), megaBufferSize, mSampleRate), std::memory_order_relaxed);
         megaBuffer.clear();
         write = 0;
     }
@@ -106,8 +106,10 @@ void MainComponent::paint (juce::Graphics& g)
     juce::String higherNote;
     juce::String lowerNote;
 
-    if (pitch > -1) {
-        size_t closestNoteidx = binarySearch(pitch);
+    double currentPitch = pitch.load(std::memory_order_relaxed);
+
+    if (currentPitch > -1) {
+        size_t closestNoteidx = binarySearch(currentPitch);
 
         juce::String primaryNote = notes[closestNoteidx].note;
         g.drawText(primaryNote, 0, height / 4, width, 40, juce::Justification::centred, true);
@@ -129,7 +131,7 @@ void MainComponent::paint (juce::Graphics& g)
         g.drawText(lowerNote, 20, height / 2 + 40, 200, 40, juce::Justification::centredLeft, true);
         g.drawText(higherNote, width - 220, height / 2 + 40, 200, 40, juce::Justification::centredRight, true);
 
-        juce::String pitchString = juce::String(pitch) + " Hz";
+        juce::String pitchString = juce::String(currentPitch) + " Hz";
         g.drawText (pitchString, getLocalBounds(), juce::Justification::centredTop, true);
     } else {
         g.drawText ("No pitch detected...", getLocalBounds(), juce::Justification::centred, true);
