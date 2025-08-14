@@ -81,7 +81,7 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
 
     write += samplesToCopy;
     
-    if (write == megaBufferSize) {
+    if (write >= megaBufferSize) {
         pitch.store(detectPitchACF(megaBuffer.getReadPointer(0), megaBufferSize, mSampleRate), std::memory_order_relaxed);
         megaBuffer.clear();
         write = 0;
@@ -108,7 +108,10 @@ void MainComponent::paint (juce::Graphics& g)
 
     double currentPitch = pitch.load(std::memory_order_relaxed);
 
-    if (currentPitch > -1) {
+    if (currentPitch <= 70.0 || currentPitch == 1000.0|| std::isnan(currentPitch) || std::isinf(currentPitch)) {
+        g.drawText("No pitch detected...", 0, height / 4, width, 40, juce::Justification::centred, true);
+        return;
+    } else {
         size_t closestNoteidx = binarySearch(currentPitch);
 
         juce::String primaryNote = notes[closestNoteidx].note;
@@ -133,8 +136,6 @@ void MainComponent::paint (juce::Graphics& g)
 
         juce::String pitchString = juce::String(currentPitch) + " Hz";
         g.drawText (pitchString, getLocalBounds(), juce::Justification::centredTop, true);
-    } else {
-        g.drawText ("No pitch detected...", getLocalBounds(), juce::Justification::centred, true);
     }
     
 }
