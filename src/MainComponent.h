@@ -26,6 +26,7 @@ public:
 private:
     double mSampleRate = 4100.0;
     std::atomic<double> pitch = -1.0;
+    double currentPitch = -1.0;
 
    // juce::TextButton startTuner;
 

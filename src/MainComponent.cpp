@@ -48,6 +48,10 @@ MainComponent::~MainComponent() {
 }
 
 void MainComponent::timerCallback() {
+    currentPitch = pitch.load(std::memory_order_relaxed);
+
+    if (currentPitch <= 70.0 || currentPitch == 1000.0) return;
+
     repaint();
 }
 
@@ -106,9 +110,7 @@ void MainComponent::paint (juce::Graphics& g)
     juce::String higherNote;
     juce::String lowerNote;
 
-    double currentPitch = pitch.load(std::memory_order_relaxed);
-
-    if (currentPitch <= 70.0 || currentPitch == 1000.0|| std::isnan(currentPitch) || std::isinf(currentPitch)) {
+    if (std::isnan(currentPitch) || std::isinf(currentPitch)) {
         g.drawText("No pitch detected...", 0, height / 4, width, 40, juce::Justification::centred, true);
         return;
     } else {
