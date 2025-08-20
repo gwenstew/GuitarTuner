@@ -25,6 +25,9 @@ public:
     void resized() override;
 
 private:
+    void buildScale();
+    juce::Image scaleImg;
+    
     double mSampleRate = 4100.0;
     std::atomic<double> pitch = -1.0;
     double currentPitch = -1.0;

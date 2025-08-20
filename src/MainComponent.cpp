@@ -16,7 +16,7 @@
 MainComponent::MainComponent()
 {
     setSize (600, 400);     //set size of display window
-
+    buildScale();
     // startTuner.setButtonText("Start Guitar Tuner"); //set up start button
     // startTuner.setToggleable(1);
     // addAndMakeVisible(startTuner);
@@ -92,16 +92,17 @@ void MainComponent::releaseResources()
     // cleanup audio buffers/resources
 }
 
-void MainComponent::paint (juce::Graphics& g)
+void MainComponent::buildScale()
 {
-    g.fillAll (juce::Colours::white);
-
-    juce::FontOptions fontSet ("Times New Roman", 20.0f, juce::Font::plain);
-    g.setFont(fontSet);
-    g.setColour (juce::Colours::black);
-
+    //builds scale as an image
     int width = getWidth();
     int height = getHeight();
+
+    scaleImg = juce::Image(juce::Image::ARGB, width, height, true);
+    juce::Graphics g(scaleImg);
+
+    g.fillAll(juce::Colours::white);
+    g.setColour (juce::Colours::black);
 
     float pi = float(std::numbers::pi);
 
@@ -131,7 +132,20 @@ void MainComponent::paint (juce::Graphics& g)
     
     //draw scale
     g.strokePath(scale, PathStrokeType(2.5f));
+}
 
+void MainComponent::paint (juce::Graphics& g)
+{
+    g.drawImageAt(scaleImg, 0, 0);
+
+    juce::FontOptions fontSet ("Times New Roman", 20.0f, juce::Font::plain);
+    g.setFont(fontSet);
+    g.setColour (juce::Colours::black);
+
+    int width = getWidth();
+    int height = getHeight();
+
+    
     juce::String higherNote;
     juce::String lowerNote;
 
