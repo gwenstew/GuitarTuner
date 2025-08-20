@@ -111,7 +111,6 @@ void MainComponent::buildScale()
 
     float pi = float(std::numbers::pi);
 
-    //iff possible use setbufferedtoimage() for scale and other static gui components
     //create scale
     juce::Path scale;
     float radius = 200.0;
@@ -128,15 +127,19 @@ void MainComponent::buildScale()
         scale.addLineSegment(juce::Line(start, end), 1.0f);
     };
 
-    addTick(pi/3);
-    addTick(5*pi/3);
-    addTick(0.0f);
+    addTick(pi/3); //left
+    addTick(5*pi/3); //right
+    addTick(0.0f); //center
 
     scale.applyTransform(juce::AffineTransform::rotation(3*pi/2));
     scale.applyTransform(juce::AffineTransform::translation(centerX, centerY));
     
     //draw scale
     g.strokePath(scale, PathStrokeType(2.5f));
+
+    //dial center
+    g.fillEllipse(centerX-50,centerY-50,100.0f,100.0f);
+
 }
 
 void MainComponent::paint (juce::Graphics& g)
@@ -150,7 +153,6 @@ void MainComponent::paint (juce::Graphics& g)
     int width = getWidth();
     int height = getHeight();
     size_t noteLen = notes.size() -1;
-
     
     juce::String higherNote;
     juce::String lowerNote;
@@ -160,30 +162,34 @@ void MainComponent::paint (juce::Graphics& g)
         return;
     } else {
         size_t closestNoteidx = size_t(binarySearch(currentPitch));
-
         juce::String primaryNote = notes[closestNoteidx].note;
+
+        //print primary note
         g.drawText(primaryNote, 0, height-325, width, 40, juce::Justification::centred, true);
 
         if (closestNoteidx > 0 ) {
-            //print higher note
+            //extract lower note
             lowerNote = notes[closestNoteidx -1].note;
         } else {
             lowerNote = " ";
         }
 
         if (closestNoteidx < noteLen) {
-            //print higher note
+            //extract higher note
             higherNote = notes[closestNoteidx +1].note;
         } else {
             higherNote = " ";
         }
         
-        g.drawText(lowerNote, 20, height / 2 + 40, 200, 40, juce::Justification::centredLeft, true);
-        g.drawText(higherNote, width - 220, height / 2 + 40, 200, 40, juce::Justification::centredRight, true);
+        //print secondary notes
+        g.drawText(lowerNote, 80, height/2, 200, 40, juce::Justification::centredLeft, true);
+        g.drawText(higherNote, width - 280, height/2, 200, 40, juce::Justification::centredRight, true);
 
         juce::String pitchString = juce::String(currentPitch) + " Hz";
         g.drawText (pitchString, getLocalBounds(), juce::Justification::centredTop, true);
     }
+
+    //dial logic
     
 }
 

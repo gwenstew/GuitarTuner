@@ -21,7 +21,7 @@ int binarySearch(double pitch) {
         //cpp truncates towards 0
         int mid = low + (high - low) / 2;
 
-        if (notes[mid].freq >= (pitch - 5) && notes[mid].freq <= (pitch + 5)) {
+        if (notes[mid].freq >= (pitch - 1) && notes[mid].freq <= (pitch + 1)) {
             //return if within range
             return mid;
         } else if (notes[mid].freq > pitch) {
@@ -36,7 +36,7 @@ int binarySearch(double pitch) {
     int closest = low;
     if (closest >= n) closest = n - 1;
     if (closest < 0) closest = 0;
-    if (closest > 0 && std::abs(notes[closest - 1].freq - pitch) < std::abs(notes[closest].freq - pitch))
+    if (closest > 0 && std::abs(notes[size_t(closest) - 1].freq - pitch) < std::abs(notes[size_t(closest)].freq - pitch))
         closest = closest - 1;
     
     return closest;
