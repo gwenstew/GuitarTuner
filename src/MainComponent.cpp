@@ -94,12 +94,44 @@ void MainComponent::releaseResources()
 
 void MainComponent::paint (juce::Graphics& g)
 {
-    g.fillAll (juce::Colours::lightsalmon);
+    g.fillAll (juce::Colours::white);
 
-    g.setFont (20.0f);
-    g.setColour (juce::Colours::maroon);
+    juce::FontOptions fontSet ("Times New Roman", 20.0f, juce::Font::plain);
+    g.setFont(fontSet);
+    g.setColour (juce::Colours::black);
+
     int width = getWidth();
     int height = getHeight();
+
+    float pi = float(std::numbers::pi);
+
+    //iff possible use setbufferedtoimage() for scale and other static gui components
+    //create scale
+    juce::Path scale;
+    float radius = 200.0;
+    float centerX = width/2;
+    float centerY = height-75;
+    float tickLen = 25.0f;
+    scale.addCentredArc(0.0f, 0.0f, radius, radius, 0.0f, pi/6, 5*pi/6, true);
+
+    //add ticks to scale path
+    auto addTick = [&](float angle) {
+        //convert polar coords of scale arc to cartesian for tick marks
+        juce::Point<float> start (radius*std::cos(angle),  radius*std::sin(angle));
+        juce::Point<float> end ((radius-tickLen)*std::cos(angle), (radius-tickLen)*std::sin(angle));
+        scale.addLineSegment(juce::Line(start, end), 1.0f);
+    };
+
+    addTick(pi/3);
+    addTick(5*pi/3);
+    addTick(0.0f);
+
+    scale.applyTransform(juce::AffineTransform::rotation(3*pi/2));
+    scale.applyTransform(juce::AffineTransform::translation(centerX, centerY));
+    
+    //draw scale
+    g.strokePath(scale, PathStrokeType(2.5f));
+
     juce::String higherNote;
     juce::String lowerNote;
 
@@ -110,7 +142,7 @@ void MainComponent::paint (juce::Graphics& g)
         size_t closestNoteidx = binarySearch(currentPitch);
 
         juce::String primaryNote = notes[closestNoteidx].note;
-        g.drawText(primaryNote, 0, height / 4, width, 40, juce::Justification::centred, true);
+        g.drawText(primaryNote, 0, height-325, width, 40, juce::Justification::centred, true);
 
         if (closestNoteidx > 0 ) {
             //print higher note
