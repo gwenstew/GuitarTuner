@@ -156,12 +156,13 @@ void MainComponent::paint (juce::Graphics& g)
     
     juce::String higherNote;
     juce::String lowerNote;
+    size_t closestNoteidx;
 
     if (std::isnan(currentPitch) || std::isinf(currentPitch)) {
         g.drawText("No pitch detected...", 0, height / 4, width, 40, juce::Justification::centred, true);
         return;
     } else {
-        size_t closestNoteidx = size_t(binarySearch(currentPitch));
+        closestNoteidx = size_t(binarySearch(currentPitch));
         juce::String primaryNote = notes[closestNoteidx].note;
 
         //print primary note
@@ -191,6 +192,23 @@ void MainComponent::paint (juce::Graphics& g)
 
     //dial logic
     
+    //input range (notes[closestNoteIdx - 1].freq and notes[closestNoteIdx - 1].freq)
+    //output range unsure? either 5pi/3 to pi/3 (positions of ticks) or 5pi/6 pi/6 (length of scale)
+    //linear mapping function --> x = ((pitch - lowerNote) / (higherNote-lowerNote)) * (endScale - startScale) + startScale
+    float pi = float(std::numbers::pi);
+    float dialRadius = 150.0f;
+    double lowerNoteFreq = notes[closestNoteidx - 1].freq;
+    double higherNoteFreq = notes[closestNoteidx + 1].freq;
+
+    juce::Point<float> dialStart (width/2, height-75);
+
+    double normalizedPitch = ((currentPitch - lowerNoteFreq) / (higherNoteFreq - lowerNoteFreq)) * (5*pi/6 - pi/6) + pi/6;
+    //float theta = float(normalizedPitch)*(2*pi/3);
+
+    juce::Point<float> dialEnd (width/2 - dialRadius*std::cos(normalizedPitch), height-75 - dialRadius*std::sin(normalizedPitch));
+
+    juce::Line<float> dial (dialStart,dialEnd);
+    g.drawLine(dial, 2.0f);
 }
 
 void MainComponent::resized()
