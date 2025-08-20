@@ -11,15 +11,15 @@ const std::array<Note, 6> notes = {{
     {"E4", 329.2}
 }};
 
-std::size_t binarySearch(double pitch) {
+int binarySearch(double pitch) {
     //simple binary search of array of notes to find index of closest note (favors low)
-    std::size_t mid;
-    std::size_t low = 0;
-    std::size_t high = notes.size() - 1;
+    const int n = static_cast<int>(notes.size());
+    int low = 0;
+    int high = n-1;
 
     while (low <= high) {
         //cpp truncates towards 0
-        mid = low + (high - low) / 2;
+        int mid = low + (high - low) / 2;
 
         if (notes[mid].freq >= (pitch - 5) && notes[mid].freq <= (pitch + 5)) {
             //return if within range
@@ -31,8 +31,15 @@ std::size_t binarySearch(double pitch) {
             //move right
             low = mid + 1;
         }
-    };
-    return std::min(low, notes.size() -1);
+    }
+    //if no exact match clamp value between 0 and n-1 or find closest note
+    int closest = low;
+    if (closest >= n) closest = n - 1;
+    if (closest < 0) closest = 0;
+    if (closest > 0 && std::abs(notes[closest - 1].freq - pitch) < std::abs(notes[closest].freq - pitch))
+        closest = closest - 1;
+    
+    return closest;
 }
 
 double detectPitchACF(const float* bufferData, int numSamples, double sampleRate) {

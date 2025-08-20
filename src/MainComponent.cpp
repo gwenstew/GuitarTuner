@@ -31,6 +31,10 @@ MainComponent::MainComponent()
 
         setAudioChannels(1,0);  //set number of input (1) and output channels (0);
         //startTuner.setToggleState(1, dontSendNotification);
+
+        // startTuner.onClick = [this] {
+        //timer set up
+        startTimer(50);
     //};
 
 }
@@ -90,6 +94,7 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
 void MainComponent::releaseResources()
 {
     // cleanup audio buffers/resources
+    megaBuffer.clear();
 }
 
 void MainComponent::buildScale()
@@ -138,12 +143,13 @@ void MainComponent::paint (juce::Graphics& g)
 {
     g.drawImageAt(scaleImg, 0, 0);
 
-    juce::FontOptions fontSet ("Times New Roman", 20.0f, juce::Font::plain);
+    juce::FontOptions fontSet ("Menlo", 20.0f, juce::Font::plain);
     g.setFont(fontSet);
     g.setColour (juce::Colours::black);
 
     int width = getWidth();
     int height = getHeight();
+    size_t noteLen = notes.size() -1;
 
     
     juce::String higherNote;
@@ -153,7 +159,7 @@ void MainComponent::paint (juce::Graphics& g)
         g.drawText("No pitch detected...", 0, height / 4, width, 40, juce::Justification::centred, true);
         return;
     } else {
-        size_t closestNoteidx = binarySearch(currentPitch);
+        size_t closestNoteidx = size_t(binarySearch(currentPitch));
 
         juce::String primaryNote = notes[closestNoteidx].note;
         g.drawText(primaryNote, 0, height-325, width, 40, juce::Justification::centred, true);
@@ -165,7 +171,7 @@ void MainComponent::paint (juce::Graphics& g)
             lowerNote = " ";
         }
 
-        if (closestNoteidx < notes.size()-1) {
+        if (closestNoteidx < noteLen) {
             //print higher note
             higherNote = notes[closestNoteidx +1].note;
         } else {

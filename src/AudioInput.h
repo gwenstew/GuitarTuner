@@ -9,7 +9,7 @@ struct Note {
 
 extern const std::array<Note, 6> notes;
 
-std::size_t binarySearch(double pitch);
+int binarySearch(double pitch);
 
 double detectPitchACF(const float* bufferData, int numSamples, double sampleRate);
 
