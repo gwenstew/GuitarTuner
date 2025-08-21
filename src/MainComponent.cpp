@@ -13,9 +13,10 @@
 MainComponent::MainComponent()
 {
 
-    startButton.setButtonText("Start Tunner");
+    startButton.setButtonText("Start Tuner");
     startButton.setClickingTogglesState(true);
     startButton.setToggleState(false, juce::dontSendNotification);
+    startButton.setColour(juce::TextButton::textColourOnId, juce::Colours::black);
 
     addAndMakeVisible(startButton);
     startButton.addListener(this);
@@ -109,11 +110,6 @@ void MainComponent::buildScale()
 
     int width = getWidth();
     int height = getHeight();
-
-    // scaleImg = juce::Image(juce::Image::ARGB, width, height, true);
-    // juce::Graphics g(scaleImg);
-
-    //g.setColour (juce::Colours::black);
 
     float pi = float(std::numbers::pi);
 
@@ -221,6 +217,6 @@ void MainComponent::paint (juce::Graphics& g)
 void MainComponent::resized()
 {
     //child components init here
-    startButton.setBounds(0, 0, 50, 25);
+    startButton.setBounds(0, 0, 100, 50);
     buildScale();
 }

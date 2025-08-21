@@ -27,7 +27,7 @@ public:
     void resized() override;
 
 private:
-    juce::ToggleButton startButton;
+    juce::TextButton startButton;
 
     void buildScale();
     juce::Path scalePath;
