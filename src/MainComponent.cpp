@@ -2,9 +2,6 @@
 #include "MainComponent.h"
 
 /* TO DO :
-
-    - figure out juce gui
-        - how to display moving dial with changing frequencies
     
     - Noise reduction; unsure best method for this... i think a low-pass or band-pass might help
         maybe butter filter
@@ -17,27 +14,15 @@ MainComponent::MainComponent()
 {
     setSize (600, 400);     //set size of display window
     buildScale();
-    // startTuner.setButtonText("Start Guitar Tuner"); //set up start button
-    // startTuner.setToggleable(1);
-    // addAndMakeVisible(startTuner);
-
-   // startTuner.onClick = [this] {
-        //timer set up
-        
     
-        //standard audio buffer size is 512... which is not large enough to detect frequencies < 100Hz
-        //must initialize MEGA BUFFER!
-        megaBuffer.setSize(1, megaBufferSize);
+    //standard audio buffer size is 512... which is not large enough to detect frequencies < 100Hz
+    //must initialize MEGA BUFFER!
+    megaBuffer.setSize(1, megaBufferSize);
 
-        setAudioChannels(1,0);  //set number of input (1) and output channels (0);
-        //startTuner.setToggleState(1, dontSendNotification);
+    setAudioChannels(1,0);  //set number of input (1) and output channels (0);
 
-        // startTuner.onClick = [this] {
-        //timer set up
-        startTimer(50);
-        
-    //};
-
+    //timer set up
+    startTimer(50);
 }
 
 MainComponent::~MainComponent() {
@@ -46,8 +31,10 @@ MainComponent::~MainComponent() {
 }
 
 void MainComponent::timerCallback() {
+    //loading pitch to protect against race conditions
     currentPitch = pitch.load(std::memory_order_relaxed);
 
+    //only repaint if pitch is within proper bounds (protects agaisnt repainting due to noise)
     if (currentPitch <= 70.0 || currentPitch >= 1400.0) return;
 
     repaint();
@@ -57,7 +44,6 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 {
     mSampleRate = sampleRate;
     (void)samplesPerBlockExpected;
-
 }
 
 
@@ -88,8 +74,6 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
         megaBuffer.clear();
         write = 0;
     }
-
-
 }
 
 void MainComponent::releaseResources()
@@ -140,11 +124,11 @@ void MainComponent::buildScale()
 
     //dial center
     g.fillEllipse(centerX-50,centerY-50,100.0f,100.0f);
-
 }
 
 void MainComponent::paint (juce::Graphics& g)
 {
+    //render cached scale image
     g.drawImageAt(scaleImg, 0, 0);
 
     juce::FontOptions fontSet ("Menlo", 20.0f, juce::Font::plain);
@@ -160,6 +144,7 @@ void MainComponent::paint (juce::Graphics& g)
     size_t closestNoteidx;
 
     if (std::isnan(currentPitch) || std::isinf(currentPitch)) {
+        //check for invalid pitch readings
         g.drawText("No pitch detected...", 0, height / 4, width, 40, juce::Justification::centred, true);
         return;
     } else {
