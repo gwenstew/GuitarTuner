@@ -4,7 +4,7 @@
 #include "AudioInput.h"
 
 
-class MainComponent : public juce::AudioAppComponent, public juce::Timer
+class MainComponent : public juce::AudioAppComponent, public juce::Timer, public juce::Button::Listener
 {
 public:
 
@@ -14,6 +14,8 @@ public:
     juce::AudioBuffer<float> megaBuffer;
     static const int megaBufferSize = 2048;
     int write = 0;
+
+    void buttonClicked(juce::Button* button) override;
 
     void timerCallback() override;
 
@@ -25,16 +27,16 @@ public:
     void resized() override;
 
 private:
+    juce::ToggleButton startButton;
+
     void buildScale();
+    juce::Path scalePath;
     juce::Image scaleImg;
 
     double mSampleRate = 4100.0;
     std::atomic<double> pitch = -1.0;
     double currentPitch = -1.0;
     float theta = 0.0f;
-
-   // juce::TextButton startTuner;
-
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

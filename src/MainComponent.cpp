@@ -12,22 +12,42 @@
 
 MainComponent::MainComponent()
 {
-    setSize (600, 400);     //set size of display window
-    buildScale();
+
+    startButton.setButtonText("Start Tunner");
+    startButton.setClickingTogglesState(true);
+    startButton.setToggleState(false, juce::dontSendNotification);
+
+    addAndMakeVisible(startButton);
+    startButton.addListener(this);
     
     //standard audio buffer size is 512... which is not large enough to detect frequencies < 100Hz
     //must initialize MEGA BUFFER!
     megaBuffer.setSize(1, megaBufferSize);
 
-    setAudioChannels(1,0);  //set number of input (1) and output channels (0);
-
-    //timer set up
-    startTimer(50);
+    juce::Component::setSize (600, 400);     //set size of display window
+    buildScale();
+    
 }
 
 MainComponent::~MainComponent() {
     stopTimer();
     shutdownAudio();
+    startButton.removeListener(this);
+}
+
+void MainComponent::buttonClicked(juce::Button* button) 
+{
+    if (button == &startButton) {
+        if (button->getToggleState()){
+            setAudioChannels(1,0);
+            startTimer(50);
+        } else {
+            setAudioChannels(0,0);
+            stopTimer();
+        }
+        
+    }
+        
 }
 
 void MainComponent::timerCallback() {
@@ -84,59 +104,57 @@ void MainComponent::releaseResources()
 
 void MainComponent::buildScale()
 {
-    //builds scale as an image
+    //builds scale path
+    scalePath.clear();
+
     int width = getWidth();
     int height = getHeight();
 
-    scaleImg = juce::Image(juce::Image::ARGB, width, height, true);
-    juce::Graphics g(scaleImg);
+    // scaleImg = juce::Image(juce::Image::ARGB, width, height, true);
+    // juce::Graphics g(scaleImg);
 
-    g.fillAll(juce::Colours::white);
-    g.setColour (juce::Colours::black);
+    //g.setColour (juce::Colours::black);
 
     float pi = float(std::numbers::pi);
 
     //create scale
-    juce::Path scale;
     float radius = 200.0;
     float centerX = width/2;
     float centerY = height-75;
     float tickLen = 25.0f;
-    scale.addCentredArc(0.0f, 0.0f, radius, radius, 0.0f, pi/6, 5*pi/6, true);
+    scalePath.addCentredArc(0.0f, 0.0f, radius, radius, 0.0f, pi/6, 5*pi/6, true);
 
     //add ticks to scale path
     auto addTick = [&](float angle) {
         //convert polar coords of scale arc to cartesian for tick marks
         juce::Point<float> start (radius*std::cos(angle),  radius*std::sin(angle));
         juce::Point<float> end ((radius-tickLen)*std::cos(angle), (radius-tickLen)*std::sin(angle));
-        scale.addLineSegment(juce::Line(start, end), 1.0f);
+        scalePath.addLineSegment(juce::Line(start, end), 1.0f);
     };
 
     addTick(pi/3); //left
     addTick(5*pi/3); //right
     addTick(0.0f); //center
 
-    scale.applyTransform(juce::AffineTransform::rotation(3*pi/2));
-    scale.applyTransform(juce::AffineTransform::translation(centerX, centerY));
+    scalePath.applyTransform(juce::AffineTransform::rotation(3*pi/2));
+    scalePath.applyTransform(juce::AffineTransform::translation(centerX, centerY));
     
-    //draw scale
-    g.strokePath(scale, PathStrokeType(2.5f));
-
-    //dial center
-    g.fillEllipse(centerX-50,centerY-50,100.0f,100.0f);
 }
 
 void MainComponent::paint (juce::Graphics& g)
 {
-    //render cached scale image
-    g.drawImageAt(scaleImg, 0, 0);
-
+    g.fillAll(juce::Colours::white);
+    
     juce::FontOptions fontSet ("Menlo", 20.0f, juce::Font::plain);
     g.setFont(fontSet);
     g.setColour (juce::Colours::black);
 
     int width = getWidth();
     int height = getHeight();
+
+    g.strokePath(scalePath, PathStrokeType(2.5f)); //draw scale
+    g.fillEllipse((width/2)-50, height-125, 100.0f, 100.0f); //draw dial circle
+
     size_t noteLen = notes.size() -1;
     
     juce::String higherNote;
@@ -202,5 +220,7 @@ void MainComponent::paint (juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    
+    //child components init here
+    startButton.setBounds(0, 0, 50, 25);
+    buildScale();
 }
