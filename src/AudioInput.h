@@ -7,7 +7,7 @@ struct Note {
     double freq;
 };
 
-extern const std::array<Note, 6> notes;
+extern const std::array<Note, 49> notes;
 
 int binarySearch(double pitch);
 

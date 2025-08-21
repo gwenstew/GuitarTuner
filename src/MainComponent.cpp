@@ -47,7 +47,7 @@ MainComponent::~MainComponent() {
 void MainComponent::timerCallback() {
     currentPitch = pitch.load(std::memory_order_relaxed);
 
-    if (currentPitch <= 70.0 || currentPitch == 1000.0) return;
+    if (currentPitch <= 70.0 || currentPitch >= 1400.0) return;
 
     repaint();
 }
@@ -202,13 +202,14 @@ void MainComponent::paint (juce::Graphics& g)
 
     juce::Point<float> dialStart (width/2, height-75);
 
-    double normalizedPitch = ((currentPitch - lowerNoteFreq) / (higherNoteFreq - lowerNoteFreq)) * (5*pi/6 - pi/6) + pi/6;
-    //float theta = float(normalizedPitch)*(2*pi/3);
+    float normalizedPitch = ((currentPitch - lowerNoteFreq) / (higherNoteFreq - lowerNoteFreq));
+    normalizedPitch = std::min(1.0f, std::max(0.0f, normalizedPitch));
 
-    juce::Point<float> dialEnd (width/2 - dialRadius*std::cos(normalizedPitch), height-75 - dialRadius*std::sin(normalizedPitch));
+    float theta =  normalizedPitch * (5*pi/3 - pi/3) + pi/3 - pi/2;
+    juce::Point<float> dialEnd (width/2 - dialRadius*std::cos(theta), height-75 - dialRadius*std::sin(theta));
 
     juce::Line<float> dial (dialStart,dialEnd);
-    g.drawLine(dial, 2.0f);
+    g.drawLine(dial, 5.0f);
 }
 
 void MainComponent::resized()
