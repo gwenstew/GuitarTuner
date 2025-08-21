@@ -27,10 +27,11 @@ public:
 private:
     void buildScale();
     juce::Image scaleImg;
-    
+
     double mSampleRate = 4100.0;
     std::atomic<double> pitch = -1.0;
     double currentPitch = -1.0;
+    float theta = 0.0f;
 
    // juce::TextButton startTuner;
 

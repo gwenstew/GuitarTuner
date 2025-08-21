@@ -23,7 +23,7 @@ MainComponent::MainComponent()
 
    // startTuner.onClick = [this] {
         //timer set up
-        startTimer(50);
+        
     
         //standard audio buffer size is 512... which is not large enough to detect frequencies < 100Hz
         //must initialize MEGA BUFFER!
@@ -35,6 +35,7 @@ MainComponent::MainComponent()
         // startTuner.onClick = [this] {
         //timer set up
         startTimer(50);
+        
     //};
 
 }
@@ -205,7 +206,9 @@ void MainComponent::paint (juce::Graphics& g)
     float normalizedPitch = ((currentPitch - lowerNoteFreq) / (higherNoteFreq - lowerNoteFreq));
     normalizedPitch = std::min(1.0f, std::max(0.0f, normalizedPitch));
 
-    float theta =  normalizedPitch * (5*pi/3 - pi/3) + pi/3 - pi/2;
+    float targetTheta =  normalizedPitch * (5*pi/3 - pi/3) + pi/3 - pi/2;
+    theta = 0.9f * theta + 0.1f * targetTheta; //lerp to smooth dial movement (theta is global)
+
     juce::Point<float> dialEnd (width/2 - dialRadius*std::cos(theta), height-75 - dialRadius*std::sin(theta));
 
     juce::Line<float> dial (dialStart,dialEnd);
