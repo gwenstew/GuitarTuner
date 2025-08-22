@@ -33,15 +33,19 @@ A lightweight **desktop guitar tuner** using the [JUCE](https://juce.com/) frame
 '''bash
    git clone https://github.com/yourusername/guitar-tuner.git
    cd guitar-tuner
+'''
 2. Create build directoruy and configure with CMake
  '''bash
     cmake -B build
+'''
 3. Build the project
 '''bash
     cmake --build build
+'''
 4. Run the app!
+'''
    ./build/GuitarTuner_artefacts/Guitar\ Tuner.app/Contents/MacOS/Guitar\ Tuner
-
+'''
 ---
 
 Tested on:
