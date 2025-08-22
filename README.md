@@ -31,11 +31,11 @@ A lightweight **desktop guitar tuner** using the [JUCE](https://juce.com/) frame
 ### Build Instructions
 
 ```bash
-   git clone https://github.com/yourusername/guitar-tuner.git
-   cd guitar-tuner
+    git clone https://github.com/yourusername/guitar-tuner.git
+    cd guitar-tuner
     cmake -B build
     cmake --build build
-   ./build/GuitarTuner_artefacts/Guitar\ Tuner.app/Contents/MacOS/Guitar\ Tuner
+    ./build/GuitarTuner_artefacts/Guitar\ Tuner.app/Contents/MacOS/Guitar\ Tuner
 ```
 ---
 
