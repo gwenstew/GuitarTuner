@@ -16,7 +16,12 @@ MainComponent::MainComponent()
     startButton.setButtonText("Start Tuner");
     startButton.setClickingTogglesState(true);
     startButton.setToggleState(false, juce::dontSendNotification);
+    
+    startButton.setColour(juce::TextButton::textColourOffId, juce::Colours::black);
     startButton.setColour(juce::TextButton::textColourOnId, juce::Colours::black);
+    startButton.setColour(juce::TextButton::buttonColourId, juce::Colours::white);
+    startButton.setColour(juce::TextButton::buttonOnColourId, juce::Colours::grey);
+
 
     addAndMakeVisible(startButton);
     startButton.addListener(this);
@@ -36,15 +41,19 @@ MainComponent::~MainComponent() {
     startButton.removeListener(this);
 }
 
+
+
 void MainComponent::buttonClicked(juce::Button* button) 
 {
     if (button == &startButton) {
         if (button->getToggleState()){
             setAudioChannels(1,0);
             startTimer(50);
+            button->setButtonText("Stop Tuner");
         } else {
             setAudioChannels(0,0);
             stopTimer();
+            button->setButtonText("Start Tuner");
         }
         
     }
@@ -166,7 +175,7 @@ void MainComponent::paint (juce::Graphics& g)
         juce::String primaryNote = notes[closestNoteidx].note;
 
         //print primary note
-        g.drawText(primaryNote, 0, height-325, width, 40, juce::Justification::centred, true);
+        g.drawMultiLineText(primaryNote, width/2-100, height-325, 200, juce::Justification::centred);
 
         if (closestNoteidx > 0 ) {
             //extract lower note
@@ -183,11 +192,12 @@ void MainComponent::paint (juce::Graphics& g)
         }
         
         //print secondary notes
-        g.drawText(lowerNote, 80, height/2, 200, 40, juce::Justification::centredLeft, true);
-        g.drawText(higherNote, width - 280, height/2, 200, 40, juce::Justification::centredRight, true);
+        g.drawMultiLineText(lowerNote, width/2 -260, height/2, 200, juce::Justification::centredLeft);
+        g.drawMultiLineText(higherNote, width/2 + 60, height/2, 200, juce::Justification::centredRight);
 
-        juce::String pitchString = juce::String(currentPitch) + " Hz";
-        g.drawText (pitchString, getLocalBounds(), juce::Justification::centredTop, true);
+        //print pitch frequency
+        juce::String pitchString = "Frequency\n" + juce::String(currentPitch) + " Hz";
+        g.drawMultiLineText (pitchString, width/2 + 125, 25, 200, juce::Justification::centredTop);
     }
 
     //dial logic

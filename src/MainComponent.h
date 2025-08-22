@@ -15,6 +15,7 @@ public:
     static const int megaBufferSize = 2048;
     int write = 0;
 
+    void initializeButton();
     void buttonClicked(juce::Button* button) override;
 
     void timerCallback() override;
