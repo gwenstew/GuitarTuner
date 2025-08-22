@@ -31,7 +31,7 @@ A lightweight **desktop guitar tuner** using the [JUCE](https://juce.com/) frame
 ### Build Instructions
 
 ```bash
-    git clone https://github.com/yourusername/guitar-tuner.git
+    git clone https://github.com/gwenstew/guitar-tuner.git
     cd guitar-tuner
     cmake -B build
     cmake --build build
@@ -44,7 +44,7 @@ Tested on:
 - Apple Silicon (arm64)
 - CMake 3.31.5
 - Apple Clang 15.0.0
-- JUCE 7 (master branch, Aug 2025
+- JUCE 7 (master branch, Aug 2025)
 
 ---
 
